@@ -5,19 +5,28 @@
 
 ; Some utility functions that you may find useful to implement.
 (define (map proc items)
-  'REPLACE-THIS-LINE)
+  (if (null? items) nil (cons (proc (car items)) (map proc (cdr items)))))
 
 (define (cons-all first rests)
-  'REPLACE-THIS-LINE)
+  (cond
+    ((null? rests) nil)
+    (else (cons
+      (append (cons first nil) (car rests))
+      (cons-all first (cdr rests))))))
 
 (define (zip pairs)
-  'REPLACE-THIS-LINE)
+  (list (map car pairs) (map cadr pairs)))
 
 ;; Problem 18
 ;; Returns a list of two-element lists
 (define (enumerate s)
-  ; BEGIN Question 18
-  'REPLACE-THIS-LINE
+   (define (enum s index)
+    (if (null? s)
+      nil
+      (cons (cons index (cons (car s) nil)) (enum (cdr s) (+ index 1)))
+    )
+  )
+  (enum s 0)
   )
   ; END Question 18
 
@@ -25,9 +34,20 @@
 ;; List all ways to make change for TOTAL with DENOMS
 (define (list-change total denoms)
   ; BEGIN Question 19
-  'REPLACE-THIS-LINE
-  )
-  ; END Question 19
+    (cond ((null? denoms) nil)  ;impossible to partition
+        ((< total 0) nil)     ;impossible to partition
+        ((= total 0) (cons nil nil))  ;one way to partition - empty
+        ((< total (car denoms)) (list-change total (cdr denoms)))
+        (else (define with-max-denom (cons-all (car denoms) (list-change (- total (car denoms)) denoms)))
+              (define without-max-denom (list-change total (cdr denoms)))
+              (append with-max-denom without-max-denom)
+          )
+    )
+  
+
+
+)
+   ; END Question 19
 
 ;; Problem 20
 ;; Returns a function that checks if an expression is the special form FORM
@@ -43,12 +63,12 @@
 (define (analyze expr)
   (cond ((atom? expr)
          ; BEGIN Question 20
-         'REPLACE-THIS-LINE
+         expr
          ; END Question 20
          )
         ((quoted? expr)
          ; BEGIN Question 20
-         'REPLACE-THIS-LINE
+         expr
          ; END Question 20
          )
         ((or (lambda? expr)
@@ -57,19 +77,19 @@
                (params (cadr expr))
                (body   (cddr expr)))
            ; BEGIN Question 20
-           'REPLACE-THIS-LINE
+           (cons form (cons params (map analyze body)))
            ; END Question 20
            ))
         ((let? expr)
          (let ((values (cadr expr))
                (body   (cddr expr)))
            ; BEGIN Question 20
-           'REPLACE-THIS-LINE
+           (cons (cons 'lambda (cons (car (zip values)) (map analyze body))) (map analyze (cadr (zip values))))
            ; END Question 20
            ))
         (else
          ; BEGIN Question 20
-         'REPLACE-THIS-LINE
+         (cons (car expr) (map analyze (cdr expr)))
          ; END Question 20
          )))
 
