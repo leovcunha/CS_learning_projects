@@ -1,16 +1,15 @@
-package db;
-import java.util.*;
+
 
 public class Database {
     /**
      * Represents a collection of named relations (tables)
      */
+ private final String dbName;
  private Map<String, Table> tables;
  
  
  public Database() {
         // YOUR CODE HERE
-   this.tables = new HashMap<String, Table>();
  }
  
  /**
@@ -19,10 +18,8 @@ public class Database {
   * @return new database instance
   * @throws
  **/
- public String transact(String query) {
-        RequestHandler req = new RequestHandler(query);
-        req.processQuery();
-        return req.getReturnString();
+    public String transact(String query) {
+        return "YOUR CODE HERE";
     }
  
  /**
@@ -31,10 +28,7 @@ public class Database {
   * @return a table copy
   * @throws error message 
  **/ 
-    Table getTable(String tbName) {
-    
-    
-    }
+ public Table getTable(String tbName) {
   
 }
  

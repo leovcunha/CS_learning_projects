@@ -6,13 +6,13 @@ class Table {
   /**
      * Represents a table with columns and rows. Each column may have different types
      */
-  //private final String tblName;
+  private final String tblName;
   private final String[] columnsName;
   private final String[] tblSchema; //types
   private List<Row> rows; // a list containing each row of the table 
 
-  Table(String [] columnsInfo) {
-    this.rows = new ArrayList<String>();
+  Table(String name, String [] columnsInfo) {
+    this.rows = new ArrayList<Row>();
     this.tblName = name;
     this.columnsName = columnsInfo;
     this.tblSchema = new String[columnsInfo.length];
@@ -91,7 +91,7 @@ class Table {
   * Insert the given row (the list of literals) to the named table.
   * @param provided values must match the columns of that table
   * @return empty String on success
-  * @throws exception if type different from tblSchema
+  * @throws typeerror , undefined
  **/ 
   String insertInto (Object[] a) {
     

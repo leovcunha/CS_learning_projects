@@ -1,59 +1,34 @@
-/**
-*Did you write prototype code to test your ideas?
-
-
-Have you written any JUnit tests? Do you plan to do so?
-
-What abstract data types (maps, sets, lists) do you primarily rely on?
-
-Do you have nested generic declarations, e.g. Map<Integer, List<Integer>>? Instructor note: This is an indication you should make a new class, see lecture slide link.
-
-Have you considered all operations from the spec? Which have you not yet considered?
-
-What are some earlier design ideas that were rejected? WHY?
-
-What helper methods have you thought about defining?
-
-How do you handle having three different types, two of each are primitive (int and float) and one of which is a reference type (String)? Do you use generics? Something else?
-
-Do you have any Maps whose keys are mutable? For example, Map<List, String>. Instructor note: This is not a good idea. Maps assume that keys are immutable.
-
-Optional Part II
-Look over the example design doc, and try to identify flaws with this design. Some questions you might consider:
-
-Does the choice of storage lend itself to a simple join method? Why or why not?
-Are abstraction barriers strong between the classes?
-Is the use of generics a good one?
-Is the use of subtype polymorphism appropriate?
-What are two improvements?
+/*
 *
 *
 *
-*
-*
-*
-*
-*
-Database ---------- Operations -> methods: readTable, storeTable, dropTable)
+
+	Overall Design Strategy:
+	
+	1. Divide operations in separate class that interact with tables/data
+	p.s. Some methods inerents to the tables and rows are kept within it (print and insertInto)
+	2. Only database class is public , all other methods are package protected
+	3. new and select- tables are created in static factories 
+	
+	
+	
+Database ---------- Operations -> methods: loadTable, storeTable, dropTable)
 	|						|	
-.	|						|
+	|						|
 	|						Interface> Table Factory
-	Tables                NewTableFactory, LoadTableFactory, SelectTableFactory   //creationals
-	|	// methods of tables: print, insert into 				|
+	Tables                NewTableFactory, SelectTableFactory   //creationals
+	|	// methods of tables: 
+	|	print, insert into 										|
 	|															|--- helper class  : Joiner
-	Rows ---- List<column> [a, 1, 2, 3.14]						|
+	Rows (inner class ) ---- List<Object> {a, 1, 2, 3.14}							|
 				|												|--- methods: applyCondition
 				|												--------------applyoperation	
 				|
-			  Column<type>  {
-				  type columndata
-				  
+			  			  
 			  }
 			  
 
-	Overall Strategy:
-	
-	Divide operations in separate class that interact with tables/data
+
 */	
 
 
@@ -65,79 +40,74 @@ public class Database {
      * Represents a collection of named relations (tables)
      */
 	private final String dbname;
-	private Map<String, Table> tables;
+	private Map<String, Table> tables; // table names are keys
 	
-	
-    public Database() {
-        // YOUR CODE HERE
-    }
 
-    public String transact(String query) {Stri
-        return "YOUR CODE HERE";
-    }
+    public Database() //constructor
+
+    public String transact(String query) 
+	/**
+	 * 
+	 * requires well formed query (asserted by handler)
+	 * effects  dispatch transaction to requestHandler 
+	**/
 }	
 
 class Table {
-	 /**
-     * Represents a table with columns and rows. Each column may have different types
-     */
-	private final String tblName;
+	/**
+    * Represents a table with columns and rows. Each column may have different types
+    */
+	private final String[] columnsName;
+	private final String[] tblSchema; //types
 	private List<Row> rows; // a list containing each row of the table 
 
-    public Table() {
-        // YOUR CODE HERE
-    }	
+    private Table(String [] columnsInfo) { //constructor
 	
+	static tableMaker(String [] columnsInfo) // static factory method 
+	/** 
+	 * requires package protected ,  arg string[] formed by 
+	 * effects  dispatch transaction to requestHandler 
+	**/	
+
+  /**
+  * Insert the given row (the list of literals) to the named table.
+  * @param provided values must match the columns of that table
+  * @return empty String on success
+  * @throws typeerror , undefined
+ **/ 
+	public static String insertInto ()
+	
+	public static String getColumntype(String columnName)
 	
 }
 
 class Row{
 	 /**
-     * Represents each row of the table obeying tblSchema of columns 
+     * Inner class representomg each row of the table obeying tblSchema of columns 
      */
-	private tblSchema;
-	private List<type>;
-	private int Index;
+//	private tblSchema;
+	private Object[] columns
+	
+	public Object[] getRow() 
+	public Object getColumn(int i) 
 	
 
 	 
 	 
 }
 
-class Column{
-	 /**
-     * Represents schema of names and types of columns of the table 
-     */
 
-	 private String type;
-	
-    public Column() {
-        // YOUR CODE HERE
-    }	
-	 
-	 
-}
-
-public interface TableFactory {
+interface TableFactory {
 	
 	public Table createTable()
 	
 }
 
-public class NewTableFactory implements TableFactory
+class NewTableFactory implements TableFactory
 
-public class SelectTableFactory implements TableFactory
+class SelectTableFactory implements TableFactory
 
 
-RowBuilder {
-	private List<column> data;	
-	public RowBuilder(Column c, int size ) {
-		for (i = 0; i<size; i++) {
-			this.data.add()
-		}
-	
-		
-	}
-}
+
 
 
