@@ -4,20 +4,19 @@ import java.lang.IllegalArgumentException;
 
 class Table {
   /**
-     * Represents a table with columns and rows. Each column may have different types
-     */
+   * Represents a table with columns and rows. Each column may have different types
+   */
   //private final String tblName;
-  private final String[] columnsName;
-  private final String[] tblSchema; //types
+  private final List<String> columnsName;
+  private final List<String> tblSchema; //types
   private List<Row> rows; // a list containing each row of the table 
 
   Table(String [] columnsInfo) {
-    this.rows = new ArrayList<String>();
-    this.tblName = name;
-    this.columnsName = columnsInfo;
-    this.tblSchema = new String[columnsInfo.length];
+    this.rows = new ArrayList<Row>();
+    this.columnsName = new ArrayList<String>(Arrays.asList(columnsInfo));
+    this.tblSchema = new ArrayList<String>();
     for (int i = 0; i < columnsInfo.length; i++) {
-      tblSchema[i] = columnsInfo[i].split(" ")[1];
+      tblSchema.add(columnsInfo[i].split(" ")[1]);
     }     
   } 
   /**
@@ -28,8 +27,7 @@ class Table {
     private List<Object> columns;
 
     Row(Object[] a) {
-      columns = new ArrayList<Object>();
-      columns = Arrays.asList(a);
+      columns = new ArrayList<Object>(Arrays.asList(a));
     }
     
     @Override
@@ -40,21 +38,15 @@ class Table {
   }
   // Getters: ====================
   /**
-   * @return table name
-   */
-  String getTblName() {
-    return tblName;
-  }
-  /**
    * @return columns name
    */  
-  String[] getColumnsName() {
+  List<String> getColumnsName() {
     return columnsName;
   }
   /**
    * @return table schema
    */  
-  String[] getTblSchema() {
+  List<String> getTblSchema() {
     return tblSchema;
   }  
   /**
@@ -65,19 +57,19 @@ class Table {
   private boolean checkSchema(Object[] newRow) {
     //throw new RuntimeException("not implemented");
     boolean cS = true;
-    String[] comp = this.getTblSchema();
+    List<String> comp = this.getTblSchema();
         
-    if (newRow.length != comp.length) return false;
-    for (int i = 0; i < comp.length; i++) {
-      if (comp[i].equals("int")) {
+    if (newRow.length != comp.size()) return false;
+    for (int i = 0; i < comp.size(); i++) {
+      if (comp.get(i).equals("int")) {
         cS = cS && (newRow[i] instanceof Integer);
     
       }
-      else if (comp[i].equals("float")) {
+      else if (comp.get(i).equals("float")) {
         cS = cS && (newRow[i] instanceof Float);
 
       }
-      else if (comp[i].equals("String")) {
+      else if (comp.get(i).equals("String")) {
         cS = cS && (newRow[i] instanceof String);   
 
       }
@@ -106,7 +98,7 @@ class Table {
   /** Print should return the String representation of the table, or an appropriate error message otherwise.
     */
   void print() {
-    System.out.println(Arrays.toString(this.getColumnsName()).replace("[", "").replace("]", ""));
+    System.out.println(this.getColumnsName().toString().replace("[", "").replace("]", ""));
     for (Row r: this.rows) {
       System.out.println(r.toString());
     } 

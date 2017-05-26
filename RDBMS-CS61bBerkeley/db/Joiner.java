@@ -9,32 +9,56 @@ public class Joiner {
  All shared columns come first, in the relative order they were in the left table of the join (the one listed first in the select clause)
  The unshared columns from the left table come next, in the same relative order they were before.
  The unshared columns from the right table come last, in the same relative order they were before.
-     */
-  Table tableJoin;
-  
-  private Joiner (Table t1, Table t2) {
-    String[] shColumns = getSharedColumns(t1, t2);
-    if (shColumns.get(0) == "") tableJoin = cartesianProduct(t1, t2); 
+ */
+  List<String> columnsJoined;
+  Table Joined;
+    
+  Joiner (Table t1, Table t2) {
+    columnsJoined = joinColumns(t1, t2);
+    if (ColumnsJoined.isEmpty()) this.cartesianProduct; 
     else {
-      
+      columnsJoin.addAll(shColumns.values());
     }
+    factory(ColumnsJoined, Rows
+    
   }
-  
-  private String[] getSharedColumns(Table t1, Table t2) {
-    String[] sc1 = t1.getColumnsName();
-    String[] sc2 = t2.getColumnsName();
-    List<String> shared = new Arraylist<String>();  
-    for (s: sc1) {
-      for (c: sc2) {
-        if (s == c) shared.add(s);
-      }
+/**
+  * Return columns to be joined 
+  * @param exactly two tables t1 and t2
+  * @return list of columns in the correct order of join operation or empty list indicating no shared columns
+  */ 
+  private ArrayList<String> joinColumns(Table t1, Table t2) {
+    List<String> sc1 = t1.getColumnsName();
+    List<String> sc2 = t2.getColumnsName();
+    List<String> shared = new ArrayList<String>();
+    List<String> others = new ArrayList<String>();
+        
+    for (String s: sc1) {
+      if (sc2.contains(s)) shared.add(s);
+      else others.add(s);
+    }
+    
+    for (String s: sc2) {
+      if (!shared.contains(s)) others.add(s);
+    }
+    
+    if (shared.isEmpty()) return shared;
+    else {
+      shared.addAll(others);
       return shared;
     }
+      
+  } 
+  /**
+  * Computes the cartesian product over two tables and updates the joined table
+  * @param exactly two tables t1 and t2
+  * @return list of columns in the correct order of join operation or empty list indicating no shared columns
+  */   
+  
+  private void cartesianProduct(Table t1, Table t2) {
+    
   
   }
-  
-  
-  private Table cartesianProduct(Table t1, Table t2)
   
   
   private Table 

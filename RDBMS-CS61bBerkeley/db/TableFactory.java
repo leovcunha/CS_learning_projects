@@ -1,5 +1,4 @@
 public interface TableFactory {
-	
-	public Table createTable()
-	
+  Table createTable()
+ 
 }

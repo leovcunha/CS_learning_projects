@@ -1,7 +1,7 @@
 public class SelectTableFactory implements TableFactory{
 
-
-
-	private static void applyCondition(Table)
-	private static void applyOperation(Table)
+  Table createTable();
+  private void applyCondition(Table);
+  private void applyOperation(Table);
+  
 }
