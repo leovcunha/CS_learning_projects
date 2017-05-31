@@ -1,3 +1,7 @@
+package db;
+import java.util.*;
+
+
 public class Joiner {
  /**
   * Helper class that combines two tables in a natural inner join
@@ -11,36 +15,50 @@ public class Joiner {
  The unshared columns from the right table come last, in the same relative order they were before.
  */
   List<String> columnsJoined;
-  Table Joined;
+  List rowsMerged;
+  Table joined;
     
-  Joiner (Table t1, Table t2) {
+  Joiner (Table t1, Table t2, TableFactory factory) {
+	columnsJoined = new ArrayList<String>();
     columnsJoined = joinColumns(t1, t2);
-    if (ColumnsJoined.isEmpty()) this.cartesianProduct; 
+    if (columnsJoined.isEmpty()) joined = cartesianProduct(t1, t2); 
     else {
-      columnsJoin.addAll(shColumns.values());
+      joined = factory.createTable((String[]) columnsJoined.toArray());      
     }
-    factory(ColumnsJoined, Rows
     
   }
+  
+  private List<Integer> mergeRows(Table t1, Table t2, List<String> jColumns) {
+	List<Integer> shRows = new ArrayList<Integer>();  
+
+		
+	}
+	  
+  }
+  
+  
 /**
-  * Return columns to be joined 
-  * @param exactly two tables t1 and t2
-  * @return list of columns in the correct order of join operation or empty list indicating no shared columns
+  * Define columns to be joined 
+  * @return list of columns in pairs (t1, t2) for join operation or empty list indicating no shared columns
   */ 
-  private ArrayList<String> joinColumns(Table t1, Table t2) {
+  private List<String> joinColumns(Table t1, Table t2) {
     List<String> sc1 = t1.getColumnsName();
     List<String> sc2 = t2.getColumnsName();
     List<String> shared = new ArrayList<String>();
     List<String> others = new ArrayList<String>();
         
     for (String s: sc1) {
-      if (sc2.contains(s)) shared.add(s);
+      if (sc2.contains(s)) {
+    	  shared.add(s);
+      }
       else others.add(s);
     }
     
     for (String s: sc2) {
-      if (!shared.contains(s)) others.add(s);
+      if (!shared.contains(s)) others.add(sc2.indexOf(s));
     }
+    
+    //return shared;
     
     if (shared.isEmpty()) return shared;
     else {
@@ -55,12 +73,8 @@ public class Joiner {
   * @return list of columns in the correct order of join operation or empty list indicating no shared columns
   */   
   
-  private void cartesianProduct(Table t1, Table t2) {
+  private Table cartesianProduct(Table t1, Table t2) {
     
   
   }
-  
-  
-  private Table 
-  
 }

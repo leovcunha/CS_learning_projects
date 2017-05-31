@@ -1,4 +1,5 @@
 package db;
+
 import java.util.*;
 import java.lang.IllegalArgumentException;
 
@@ -22,12 +23,16 @@ class Table {
   /**
    * Inner class represents each row of the table 
    */
-  private class Row {
+  class Row {
 
     private List<Object> columns;
 
     Row(Object[] a) {
       columns = new ArrayList<Object>(Arrays.asList(a));
+    }
+    
+    Object getCell(int i) {
+    	return columns.get(i);
     }
     
     @Override
@@ -49,6 +54,28 @@ class Table {
   List<String> getTblSchema() {
     return tblSchema;
   }  
+  /**
+   * @return number of rows in Table
+   */    
+  int getRowSize() {
+	return this.rows.size();
+  }
+  
+  /**
+   * @return list of objects in a specific row with index i in Table
+   */ 
+  List<Object> getRow(int i) {
+	  return rows.get(i).columns;
+  }
+  
+  List<Object> getColumn(String cName) {
+	  int i = this.columnsName.indexOf(cName);
+	  List<Object> xCol = new ArrayList<Object>();
+	  for (Row r: rows) {
+		  xCol.add(r.getCell(i));
+	  }
+	  return xCol;
+  }
   /**
   * internal method that check types of each literal provided by a new row match the table schema
   * @param object array

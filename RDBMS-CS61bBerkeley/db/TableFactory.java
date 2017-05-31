@@ -1,4 +1,5 @@
-public interface TableFactory {
-  Table createTable()
- 
-}
+package db;
+
+interface TableFactory {
+   Table createTable(String[] columns);
+ }
