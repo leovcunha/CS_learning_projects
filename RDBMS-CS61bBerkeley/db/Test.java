@@ -1,3 +1,4 @@
+package db;
 /**
  * Auto Generated Java Class.
  */

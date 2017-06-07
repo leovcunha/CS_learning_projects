@@ -1,3 +1,4 @@
+package db;
 public class Operations {
     /**
      * TAkes string query and convert into object with information on which methods must be operated on DB

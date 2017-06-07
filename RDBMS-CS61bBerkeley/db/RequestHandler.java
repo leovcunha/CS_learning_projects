@@ -1,3 +1,4 @@
+package db;
 public class RequestHandler {
     /**
      * TAkes string query and convert into information on which methods must be operated on DB

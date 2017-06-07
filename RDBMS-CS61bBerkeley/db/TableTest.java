@@ -1,5 +1,6 @@
 package db;
 
+
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ public class TableTest {
     Object[] e = {"e", "iii", 7};
     Object[] f = {"f", "jjj", 8};
     
-    Table table = new Table("tabela teste", sch );
+    Table table = new Table(sch );
 
 
 

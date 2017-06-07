@@ -1,10 +1,11 @@
 package db;
-import java.util.*;
 
-public class Database {
+import java.util.*;
     /**
      * Represents a collection of named relations (tables)
      */
+public class Database {
+
  private Map<String, Table> tables;
  
  
@@ -14,7 +15,7 @@ public class Database {
  }
  
  /**
-  * dispatch transaction to requestHandler 
+  * receives transaction request from user and dispatch to requestHandler 
   * @param a string, to be treated as a query command
   * @return new database instance
   * @throws

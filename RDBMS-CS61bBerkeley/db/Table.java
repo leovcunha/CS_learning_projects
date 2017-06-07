@@ -3,9 +3,9 @@ package db;
 import java.util.*;
 import java.lang.IllegalArgumentException;
 
-class Table {
+class Table implements Iterable<Row>{
   /**
-   * Represents a table with columns and rows. Each column may have different types
+   * Represents a table with columns and rows. Each column may have a different type (float, int or string)
    */
   //private final String tblName;
   private final List<String> columnsName;
@@ -23,24 +23,7 @@ class Table {
   /**
    * Inner class represents each row of the table 
    */
-  class Row {
 
-    private List<Object> columns;
-
-    Row(Object[] a) {
-      columns = new ArrayList<Object>(Arrays.asList(a));
-    }
-    
-    Object getCell(int i) {
-    	return columns.get(i);
-    }
-    
-    @Override
-    public String toString() {
-      return this.columns.toString().replace(" ", "")
-                    .replace("[", "").replace("]", "");
-    }
-  }
   // Getters: ====================
   /**
    * @return columns name
@@ -58,23 +41,31 @@ class Table {
    * @return number of rows in Table
    */    
   int getRowSize() {
-	return this.rows.size();
+    return this.rows.size();
   }
   
   /**
    * @return list of objects in a specific row with index i in Table
    */ 
   List<Object> getRow(int i) {
-	  return rows.get(i).columns;
+   return rows.get(i).getColumns();
   }
   
   List<Object> getColumn(String cName) {
-	  int i = this.columnsName.indexOf(cName);
-	  List<Object> xCol = new ArrayList<Object>();
-	  for (Row r: rows) {
-		  xCol.add(r.getCell(i));
-	  }
-	  return xCol;
+   int i = this.columnsName.indexOf(cName);
+   List<Object> xCol = new ArrayList<Object>();
+   for (Row r: rows) {
+    xCol.add(r.getCell(i));
+   }
+   return xCol;
+  }
+  
+  List<Integer> getCIndexes(List<String> colTitles) {
+   List<Integer> indexes = new ArrayList<Integer>();
+   for (String s: colTitles) {
+    indexes.add(this.getTblSchema().indexOf(s));
+   }
+   return indexes;
   }
   /**
   * internal method that check types of each literal provided by a new row match the table schema
@@ -130,6 +121,9 @@ class Table {
       System.out.println(r.toString());
     } 
   }
-  
-  public static void main(String[] args) { }  
+
+  @Override
+  public Iterator<Row> iterator() {
+    return rows.iterator();
+  }  
 }
