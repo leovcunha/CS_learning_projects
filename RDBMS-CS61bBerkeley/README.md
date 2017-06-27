@@ -1,4 +1,4 @@
-#A Simple Relational Database Management System 
+#  A Simple Relational Database Management System 
 
 Project done for learning in 6 weeks according to specification in : 
 http://datastructur.es/sp17/materials/proj/proj2/proj2.html
@@ -12,6 +12,7 @@ p.s. Some methods inherents to the db, tables and rows are kept within it (print
 3. new tables are created by factory method inside table class 
 4. select- tables are created through select Table builder (pattern)
 5. select builder calls joiner helper class to create natural inner join table passing itself for table creation
+	
 	
 	
 ![Alt text](/RDBMS-CS61bBerkeley/Untitled%20Diagram.jpg)	
@@ -28,7 +29,7 @@ Tables
 Rows () ---- List<Object> {a, 1, 2, 3.14}							
 ```																
 														
-###Most important Classes descriptions
+### Most important Classes descriptions
 ```java
 public class Database {
     //  Represents a collection of named relations (tables)    
