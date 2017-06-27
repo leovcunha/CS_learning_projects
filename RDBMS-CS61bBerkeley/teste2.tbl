@@ -1,0 +1,6 @@
+TeamName string, Season int, Wins int, Losses int, Ties int, a int, b int, c String
+'GoldenBears',2016,5,7,0,1,34,'alfa'
+'GoldenBears',2015,8,5,0,1,34,'alfa'
+'Steelers',2015,10,6,0,1,34,'alfa'
+'Mets',2015,90,72,0,1,34,'alfa'
+'Patriots',2015,12,4,0,1,34,'alfa'

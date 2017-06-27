@@ -4,16 +4,23 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class JoinerTest {
+/**
+ * A JUnit test case class.
+ * Every method starting with the word "test" will be called when running
+ * the test with JUnit.
+ */
+public class RequestHandlerTest {
+  
+    Database db = new Database();  
+    
+    String sch1 = "'a String', 'b String', 'c int'";
 
-    String[] sch1 = {"a String", "b String", "c int"};
-    Table table1 = Table.createTable(sch1 );
+    String[] sch2 = "'a String', 'b String', 'c int'";
+
     
-    String[] sch2 = {"x String", "b String", "d int"};
-    Table table2 = Table.createTable(sch2 );
-    
-    String[] sch3 = {"x String", "y String", "z int"};
-    Table table3 = Table.createTable(sch3 );
+    String[] sch3 = "'a String', 'b String', 'c int'";
+    Table table3 = new Table(sch3 );
+         
     
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
@@ -30,8 +37,8 @@ public class JoinerTest {
       table1.insertInto(b1);
       table2.insertInto(a2);
       table2.insertInto(b2);
-      Joiner jj = new Joiner(table1, table2);
-      assertEquals(jj.getJoined().getColumnsHeader().get(0), "b String");
+      Joiner jj = new Joiner(table1, table2, tf);
+      assertEquals(jj.joined.getColumnsName().get(0), "b String");
     }
     
     @Test
@@ -44,10 +51,9 @@ public class JoinerTest {
       table1.insertInto(b1);
       table3.insertInto(a2);
       table3.insertInto(b2);
-      Joiner jj = new Joiner(table1, table3);
-      jj.getJoined().print();
-      assertEquals(jj.getJoined().getRowSize(), 4);
+      Joiner jj = new Joiner(table1, table3, tf);
+      jj.joined.print();
+      assertEquals(jj.joined.getRowSize(), 4);
     }
-
-
+  
 }

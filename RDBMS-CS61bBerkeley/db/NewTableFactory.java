@@ -1,5 +1,8 @@
 package db;
 public class NewTableFactory implements TableFactory{
-  Table createTable(String[] columns) {
-}
+  
+  public Table createTable(String[] columns) {
+    return new Table(columns);
+  }
+
 }

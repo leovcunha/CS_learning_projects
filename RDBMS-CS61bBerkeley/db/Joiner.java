@@ -13,17 +13,19 @@ import java.util.*;
 */
 class Joiner {
 
-  SharedOthers columnsJoined;
-  Table joined;
+  private SharedOthers columnsJoined;
+  private Table joined;
     
-  Joiner (Table t1, Table t2, TableFactory factory) {
+  Joiner (Table t1, Table t2) {
+	  
     this.columnsJoined = joinColumns(t1, t2);
-    if (columnsJoined.shared.isEmpty()) joined = cartesianProduct(t1, t2); 
-    else {
-      this.joined = factory.createTable(columnsJoined.toArray());
-      System.out.println(joined.getColumnsName());
+    this.joined = Table.createTable(columnsJoined.toArray());
+    
+    if (columnsJoined.shared.isEmpty()) 
+      this.cartesianProduct(joined, t1, t2, columnsJoined); 
+    else 
       this.mergeRows(joined, t1, t2, columnsJoined);
-    }
+    
     
   }
   /**
@@ -67,22 +69,20 @@ class Joiner {
     // gets col index of shared cols from t1, t2
     List<Integer> indexes1 = t1.getCIndexes(shColumns.shared);
     List<Integer> indexes2 = t2.getCIndexes(shColumns.shared); 
-    List<Integer> otherIndex1 = t2.getCIndexes(shColumns.others1); 
+    List<Integer> otherIndex1 = t1.getCIndexes(shColumns.others1); 
     List<Integer> otherIndex2 = t2.getCIndexes(shColumns.others2); 
 
-    for (Row r1: t1) {
-          
-         for (Row r2: t2) {
-          System.out.println(shColumns.shared);
-          if (r1.getColumns(indexes1).containsAll(r2.getColumns(indexes2))) {
-           
+    for (Row r1: t1) {          
+        for (Row r2: t2) {
+        	 
+          if (r1.getColumns(indexes1).containsAll(r2.getColumns(indexes2))) {         
            rBuilder = new ArrayList<Object>();
            rBuilder.addAll(r1.getColumns(indexes1));
            rBuilder.addAll(r1.getColumns(otherIndex1));
            rBuilder.addAll(r2.getColumns(otherIndex2));
            tResult.insertInto(rBuilder.toArray());
           }          
-         }   
+        }   
     } 
     
    
@@ -94,8 +94,8 @@ class Joiner {
   * @return object containing shared columns, non shared in table 1 and 2
   */ 
   private SharedOthers joinColumns(Table t1, Table t2) {
-    List<String> sc1 = t1.getColumnsName();
-    List<String> sc2 = t2.getColumnsName();
+    List<String> sc1 = t1.getColumnsHeader();
+    List<String> sc2 = t2.getColumnsHeader();
     List<String> shared = new ArrayList<String>();
     List<String> others1 = new ArrayList<String>();
     List<String> others2 = new ArrayList<String>();
@@ -120,29 +120,28 @@ class Joiner {
   * @return list of columns in the correct order of join operation or empty list indicating no shared columns
   */   
   
-  private Table cartesianProduct(Table t1, Table t2) {
-    return t2;
-    
+  private void cartesianProduct(Table tResult, Table t1, Table t2, SharedOthers shColumns) {
+
+	    List<Object> rBuilder;
+	    // gets col index of shared cols from t1, t2 
+
+	    for (Row r1: t1) {          
+	        for (Row r2: t2) {
+	        	         
+	           rBuilder = new ArrayList<Object>();
+	           rBuilder.addAll(r1.getColumns());
+	           rBuilder.addAll(r2.getColumns());
+	           tResult.insertInto(rBuilder.toArray());
+	                    
+	        }   
+	    } 	  	    
+  }
   
+  Table getJoined() {
+	  return this.joined;
   }
   
   public static void main(String args[]) {
-    String[] sch1 = {"a String", "b String", "c int"};
-    Object[] a1 = {"a", "xxx", 3};
-    Object[] b1 = {"b", "fff", 4};    
-    Table table1 = new Table(sch1 );
-    table1.insertInto(a1);
-    table1.insertInto(b1);
-    
-    String[] sch2 = {"x String", "b String", "d int"};
-    Object[] a2 = {"a", "xxx", 3};
-    Object[] b2 = {"b", "fff", 4};
-    Table table2 = new Table(sch2 );
-    table2.insertInto(a2);
-    table2.insertInto(b2);
-    
-    TableFactory tf = new SelectTableFactory();
-    Joiner jj = new Joiner(table1, table2, tf);
-    jj.joined.print();
+
   }
 }

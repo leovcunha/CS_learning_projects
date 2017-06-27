@@ -13,14 +13,14 @@ public class TableTest {
      */
     
     String[] sch = {"a String", "b String", "c int"};
-    Object[] a = {"a", "xxx", 3};
+    //String af = "'a', 'xxx', 3";
     Object[] b = {"b", "fff", 4};
     Object[] c = {"c", "ggg", 5};
     Object[] d = {"d", "hhh", 6};
     Object[] e = {"e", "iii", 7};
     Object[] f = {"f", "jjj", 8};
     
-    Table table = new Table(sch );
+    Table table = Table.createTable(sch );
 
 
 
@@ -32,30 +32,19 @@ public class TableTest {
     
     @Test    
     public void testInsertInto() {
-      assertEquals(table.insertInto(a), "");   
+      //Object[] a = af.split(",");
+      //System.out.println(table.print());
+      //assertEquals(table.insertInto(a), "");   
       assertEquals(table.insertInto(b), "");    
       assertEquals(table.insertInto(c), "");    
       assertEquals(table.insertInto(d), "");    
       assertEquals(table.insertInto(e), "");    
       assertEquals(table.insertInto(f), "");    
     }   
-  /*  
-    @Test 
-    public void testCheck() {
-        assertEquals((double) c2.get(), 1.34, 0.01);
 
-    }     
-    
-    @Test 
-    public void testInt() {
-        assertEquals((int) c3.get(), 100); 
-        
-    }
-    
-    public static void main(String[] args) { 
 
-    }
- */   
+
+
 
 }
 

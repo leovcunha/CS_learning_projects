@@ -1,5 +1,6 @@
 package db;
 
 interface TableFactory {
-   Table createTable(String[] columns);
- }
+  Table createTable(String[] columns);
+ 
+}
