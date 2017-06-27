@@ -3,7 +3,7 @@
 Project done for learning in 6 weeks according to specification in : 
 http://datastructur.es/sp17/materials/proj/proj2/proj2.html
 
-Overall Design Strategy:
+## Overall Design Strategy:
 
 1. Divide query handling and operations in separate class called RequestHandler that interpret the query and do what was required 
 through its methods 
