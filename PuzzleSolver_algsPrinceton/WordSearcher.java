@@ -57,15 +57,15 @@ public class WordSearcher {
           }
           n++;
         }
-         
-        while (sc.hasNext()) {
-          System.out.println("type a word to search (enter when done:");
+
+        while (true) {
+          System.out.println("type a word to search (enter when done):");
           line = sc.nextLine();
-          if (line.matches("\\n")) break;
+          if (line.matches("\\n||\\r")) break;
           searchedWords.add(line);
         }
         sc.close();
-        ;
+        
         for (int i = 0; i < puzzle.length; i++) {
           for (String s: puzzle[i]) {
             System.out.print(s + " ");
