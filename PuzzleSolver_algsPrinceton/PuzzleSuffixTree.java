@@ -1,11 +1,13 @@
 
 /**
- * definitions:
+ * Definitions:
  * 
  * Ukkonen rules according to : 
+ * https://stackoverflow.com/questions/9452701/ukkonens-suffix-tree-algorithm-in-plain-english
+ * http://www.geeksforgeeks.org/suffix-tree-application-2-searching-all-patterns/
  * 
  * Rule 1---
- * After an insertion from root,
+ * After an insertion from root, if active length > 0 
  * active_node remains root
  * active_edge is set to the first character of the new suffix we need to insert, i.e. b
  * active_length is reduced by 1
@@ -37,26 +39,27 @@ public class PuzzleSuffixTree {
   int remainder;
   int[] currentPosition; 
   //input
-  String[][] wordPuzzle;
+  char[][] wordPuzzle;
   int size;
   //
    
   class Node { 
-    TreeMap<Character, Node> children;
-    Node suffixLink;  
+    TreeMap<Character, Node> outEdges;
+    Node suffixLink; //pointer from last new node to newly created node  
     int[] start, end; // each array guards {x, y} of the puzzle
     
     Node(int[] start, int[] end) {
        this.suffixLink = root;
        this.start = start;
        this.end = end;
-       this.children = new TreeMap<Character, Node>();
-    }
-    
-    int edgeLength() {
-      return (Math.max(this.end[0] - this.start[0], this.end[1] - this.start[1]) +1);
+       this.outEdges = new TreeMap<Character, Node>();
     }
    
+    int edgeLength() {
+      if (this.start[0] == -1) 
+        return 0;
+      return (Math.max(this.end[0] - this.start[0], this.end[1] - this.start[1]) +1);
+    } 
   }
     
   /**
@@ -64,36 +67,73 @@ public class PuzzleSuffixTree {
    */
   public PuzzleSuffixTree (int N) {
     this.activeNode = this.root = new Node(new int[] {-1,-1}, new int[] {-1,-1});
+    this.activeEdge = '\u0000';
+    this.activeLength = 0;
     this.size = N;
-    this.wordPuzzle = new String[size][size];
+    this.wordPuzzle = new char[size][size];
     
     
   }
   
-  Node walkDown(Node current) {
-    if (activeLength >= current.edgeLength()) {
-      activeEdge += current.edgeLength()
-    }
+  boolean walkDown(Node current) {
+    if (activeLength >= current.edgeLength())
+      return true;
+    else 
+      return false;
   
   }
   
-  public void processSuffixTree() {
+  public void extendSuffixTree() {
     
-    for (i = 0; i < size; i++) {
-      for (j = 0; j < size; j++) {
-        currentPosition = {i, j};
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        currentPosition =  new int[] {i, j};
         remainder++;
         lastNewNode = null;
-        
+/*        
+        if (activeLength == 0) {
+          activeEdge = wordPuzzle[i][j];
+        }
+*/        
         while (remainder > 0) {
-          
-          
-        }     
+          if (!activeNode.outEdges.containsKey(wordPuzzle[i][j])) {
+            activeNode.outEdges.put(wordPuzzle[i][j], new Node(currentPosition, new int[] {i, size})); //direction???
+                                    
+           /* 
+            if (lastNewNode != null) {
+              lastNewNode.suffixLink = activeNode;
+              lastNewNode = null; 
+            }
+           */                         
+          } else {
+             
+            if (activeLength == 0) {
+              activeEdge = wordPuzzle[i][j];
+              Node next = activeNode.outEdges.get(activeEdge);
+              activeLength++;
+              break;
+              
+            } else {
+             
+              if (wordPuzzle[next.start[0]+activeLength[0]][next.start[1]+activeLength[1]] == wordPuzzle[i][j]) { //direction?               
+                activeLength++;
+                break;
+              }
+              
+              int[] splitEnd = new int[] {next.start[0] + activeLength[0] - 1, next.start[1] + activeLength[1] - 1};
+              activeNode.outEdges.put(activeEdge, new Node(next.start, splitEnd));
+              next.start + = activeLength;
+              activeNode.outEdges.get(activeEdge).put(wordPuzzle[next.start[0]][next.start[1]], next);
+              
+              
+            }
+          }
+          remainder--;
+        }          
+         
       }
-    }    
-  }
-    
-    
+    }
+  }    
     
     
  /**
