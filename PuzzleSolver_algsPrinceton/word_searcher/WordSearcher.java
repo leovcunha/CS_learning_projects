@@ -19,14 +19,58 @@
  * checking).
  *  
  */
+package word_searcher;
+
 import java.util.*;
 
  /**
  * WordSearcher
  */
 public class WordSearcher {
+ 
+ /**
+ * @param matrix with the puzzle 
+ * @Returns a string with all the possibilities of vertical, horizontal and diagonals of the Puzzle
+ */  
+  public static String allPossibles(char[][] puzzle) {
+    StringBuilder sb1 = new StringBuilder(); //Horizontal
+    StringBuilder sb2 = new StringBuilder(); //Vertical
+    StringBuilder sb3 = new StringBuilder(); //diagonal up
+    StringBuilder sb4 = new StringBuilder(); //diag down
+    int size = puzzle.length;
+    int k=0;
+    int m=0;
+    
+    for (int i = 0; i < 2*size-1; i++) {
+      for (int j = 0; j < size; j++) {
+        if (i < size) {
+          sb1.append(puzzle[i][j]);
+          sb2.append(puzzle[j][i]);
+        }
+        k = i - j;
+        m = i+j-(size-1);
+        if (k >= 0 && k < size) {
+          sb3.append(puzzle[k][j]);
+        }
+        if (m >= 0 && m < size) {
+          sb4.append(puzzle[j][m]);
+        }
+        
+        if (j == size-1 && i < size) { 
+          sb1.append("#");
+          sb2.append("#");
 
-    public WordSearcher () {
+        }
+        if (j == size-1) { 
+          sb3.append("#");
+          sb4.append("#");
+        }
+      }
+    }
+    return sb1.toString() + sb2.toString()+ sb3.toString()+ sb4.toString();
+  }
+
+    private WordSearcher () {
         
     }
 
@@ -44,13 +88,13 @@ public class WordSearcher {
         }
         int n = 0;
         String line = "";
-        String[][] puzzle = new String[N][N];
+        char[][] puzzle = new char[N][N];
         List<String> searchedWords = new ArrayList<String>();
         
         while (n < N) {      
           System.out.print("Enter line " + (n+1) + ":");
           line = sc.nextLine();
-          puzzle[n] = line.split(" ");
+          puzzle[n] = line.replace(" ", "").toCharArray();
           if (puzzle[n].length != N) {
             System.out.println("must have " + N + " columns");
             continue;
@@ -67,12 +111,24 @@ public class WordSearcher {
         sc.close();
         
         for (int i = 0; i < puzzle.length; i++) {
-          for (String s: puzzle[i]) {
-            System.out.print(s + " ");
+          for (char c: puzzle[i]) {
+            System.out.print(c + " ");
           }
           System.out.println("");
         }
-        System.out.println(searchedWords);
+        String resultingText = allPossibles(puzzle);
+        System.out.println(resultingText);
+        UkkonenSuffixTree GST = new GeneralizedSuffixTree(resultingText);
+        
+        for (String s: searchedWords) {
+          System.out.println(" [" + GST.search(s)[0] + ", "+ GST.search(s)[1] + "]");
+      
+        }
+        
 
+       
+     
+        
+        
     }
 }

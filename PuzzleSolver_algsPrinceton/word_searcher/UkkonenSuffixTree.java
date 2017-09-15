@@ -79,9 +79,10 @@ public class UkkonenSuffixTree {
   }
      
   /**
-   * Constructor; create a SuffixTree for a Puzzle of Size N
+   * Constructor; create a SuffixTree for a given string
    */
   public UkkonenSuffixTree (String text) {
+    
     this.root = new Node(-1, -1);
     this.activeNode = root;
     this.activeEdge = '\u0000';
@@ -91,6 +92,7 @@ public class UkkonenSuffixTree {
   }
   
   boolean walkDown(Node current) {
+    
     if (current == null) return false;
     if (activeLength >= current.edgeLength())
       return true;
@@ -103,13 +105,13 @@ public class UkkonenSuffixTree {
    * @return Suffix tree of the text given to the class at object creation
    */
   public void buildSuffixTree() {
+    
     Node next = null;
     Node splitNode;
     
     for (int i = 0; i < size; i++) {
-         System.out.println("iteration" + i+ ":::::::::::");
+
         remainder++;
-        System.out.println("remainder: " + remainder);
         lastNewNode = null;
 
         while (remainder > 0) {
@@ -119,12 +121,11 @@ public class UkkonenSuffixTree {
                 activeEdge = '\u0000';
                 activeLength = 0;                                
                 next = activeNode.outEdges.get(activeEdge);
-                System.out.println("walked down to node: " + activeNode + " active edge: " + activeEdge + " length: " + activeLength);
           }
                               
           if (activeLength == 0 && !activeNode.outEdges.containsKey(text.charAt(i))) {
-            activeNode.outEdges.put(text.charAt(i), new Node(i, size)); //direction???
-            System.out.println("inserted suffix " + activeNode.outEdges.get(text.charAt(i)));
+            activeNode.outEdges.put(text.charAt(i), new Node(i, size)); 
+
                                               
           } else {
                        
@@ -132,54 +133,41 @@ public class UkkonenSuffixTree {
               activeEdge = text.charAt(i);
               next = activeNode.outEdges.get(activeEdge); 
               activeLength++;
-              System.out.println("new active edge: " + activeEdge + " length: " + activeLength);
               break;              
             } 
             
             if (text.charAt(next.start+activeLength) == text.charAt(i)) {              
                 activeLength++;
-                System.out.println("active Length = " + activeLength);
                 break;
             }
               
             int splitEnd = next.start + activeLength;
             
             splitNode = new Node(next.start, splitEnd);
-            System.out.print("edge splited at new node:" + splitNode.start + " " );
-            System.out.println(splitNode.end);
             splitNode.outEdges.put(text.charAt(i), new Node(i, size));           
             next.start += activeLength;
             splitNode.outEdges.put(text.charAt(next.start), next); 
             activeNode.outEdges.put(activeEdge, splitNode);
-            System.out.println("new edge splitted :" + activeNode.outEdges.get(activeEdge).outEdges.get(text.charAt(i)));
-            System.out.println("new edge splitted :" + activeNode.outEdges.get(activeEdge).outEdges.get(text.charAt(next.start)));
-
            
             if (lastNewNode != null) {
               lastNewNode.suffixLink = splitNode;
-              System.out.println("suffix link from " +  lastNewNode + " to " + splitNode);
             }
               
               lastNewNode = splitNode;  
-              System.out.println("last new node: " + splitNode);
             }
           
           remainder--;
-          System.out.println("remainder: "+ remainder);
           
           if (activeNode.start == -1 && remainder > 0) {
             activeLength--;
             activeEdge = text.charAt(i - activeLength);
-            next = activeNode.outEdges.get(activeEdge); // what about remainder still > 0 ?
-            System.out.println("new active edge: " + activeEdge + " length: " + activeLength);
+            next = activeNode.outEdges.get(activeEdge); 
+
           }
           else if (activeNode.start != -1) {
             activeNode = activeNode.suffixLink;
             next = activeNode.outEdges.get(activeEdge);
-            System.out.println("jumped to suffix link " + activeNode);
-          }
-          
-          System.out.println("active point: " + activeNode + " active edge: " + activeEdge + " length: " + activeLength + " remainder: " + remainder);
+          }       
         }                   
     }
   }    
@@ -192,10 +180,41 @@ public class UkkonenSuffixTree {
   *  the size of the array matches the number of occurrences
   */
   public int[] search (String query) {
-   throw new RuntimeException("not yet implemented"); 
+
+    activeNode = root;
+    activeLength = 0;
+    Node next;
+    int begin;
+    int fin;
+    
+    if (activeNode.outEdges.containsKey(query.charAt(0))) {
+        activeEdge = query.charAt(0);
+        next = activeNode.outEdges.get(activeEdge);
+        begin = next.start;
+    }
+    else return new int[]{-1,-1};
+    
+    for (int i = 1; i < query.length(); i++) {
+       
+       if (walkDown(next)) {
+           activeNode = next;
+           activeEdge = query.charAt(i);
+           activeLength = 0;                                
+           next = activeNode.outEdges.get(activeEdge);
+       }
+     
+       if (text.charAt(next.start+activeLength) == text.charAt(i)) {              
+           activeLength++;
+       }
+    }
+    
+    fin = next.start + activeLength;
+    
+    return new int[] {begin, fin};
   }
 
   public void display(Node n) {
+    
    //base case n.outEdges.isEmpty()
    System.out.println(" [" + n.start + ", "+ n.end + "]");
    
@@ -210,9 +229,9 @@ public class UkkonenSuffixTree {
      System.out.println("$");
      return;
  } 
-  
+  //tests below
  public static void main(String[] args) {
-   UkkonenSuffixTree st = new UkkonenSuffixTree("aaa#bbb#ccc#abc#abc#abc#a#ba#cba#cb#c#c#bc#abc#ab#a");
+   UkkonenSuffixTree st = new UkkonenSuffixTree("aaa#bbb#ccc#abc#abc#abc#a#ba#cba#cb#c#cb#c#abc#ab#a");
    st.buildSuffixTree();
    st.display(st.root);
 
