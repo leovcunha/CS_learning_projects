@@ -1,19 +1,29 @@
 /**
- * Definitions:
- * 
  * Ukkonen rules according to : 
  * https://stackoverflow.com/questions/9452701/ukkonens-suffix-tree-algorithm-in-plain-english
  * http://www.geeksforgeeks.org/suffix-tree-application-2-searching-all-patterns/
  * 
+ * General Definitions:
+ * If the path from the root labelled S[j..i] ends at leaf edge (i.e. S[i] is last character on leaf edge) then 
+ * character S[i+1] is just added to the end of the label on that leaf edge.
+ * 
+ * If the path from the root labelled S[j..i] ends at non-leaf edge (i.e. there are more characters after S[i] 
+ * on path) and next character is not s[i+1], then a new leaf edge with label s{i+1] and number j is created
+ * starting from character S[i+1].
+ * A new internal node will also be created if s[1..i] ends inside (in-between) a non-leaf edge. 
+ * 
+ * If the path from the root labelled S[j..i] ends at non-leaf edge (i.e. there are more characters after
+ * S[i] on path) and next character is s[i+1] (already in tree), update active point ( active node, edge, length)
+ * 
  * Rule 1---
  * After an insertion from root, if active length > 0 
- * active_nodeï¿½remains root
- * active_edgeï¿½is set to the first character of the new suffix we need to insert, (if abx i.e.ï¿½b)
- * active_lengthï¿½is reduced by 1
+ * active_nodeï remains root
+ * active_edge is set to the first character of the new suffix we need to insert, (if abx i.e.ï¿½b)
+ * active_lengthï is reduced by 1
  * 
- * ï¿½Rule 2:--
+ * Rule 2:--
  * If we split an edge and insert a new node, and if that isï¿½not the first node created during the current step, 
- * we connect the previously inserted node and the new node through a special pointer, aï¿½suffix link. We will 
+ * we connect the previously inserted node and the new node through a special pointer, aï suffix link. We will 
  * later see why that xxis useful. Here is what we get, the suffix link is represented as a dotted edge:
  * 
  * Rule 3:
@@ -88,49 +98,45 @@ public class UkkonenSuffixTree {
       return false;
   
   }
-  
+  /**
+   * Builds Ukkonen Suffix Tree according to specification
+   * @return Suffix tree of the text given to the class at object creation
+   */
   public void buildSuffixTree() {
     Node next = null;
     Node splitNode;
     
     for (int i = 0; i < size; i++) {
-    	    System.out.println("iteration" + i+ ":");
+         System.out.println("iteration" + i+ ":::::::::::");
         remainder++;
+        System.out.println("remainder: " + remainder);
         lastNewNode = null;
 
         while (remainder > 0) {
          
           if (walkDown(next)) {
                 activeNode = next;
-                activeEdge = text.charAt(i-activeLength);
-                activeLength -= next.edgeLength();                                
+                activeEdge = '\u0000';
+                activeLength = 0;                                
                 next = activeNode.outEdges.get(activeEdge);
-                System.out.println("active point: " + activeNode + " active edge: " + activeEdge + " length: " + activeLength);
+                System.out.println("walked down to node: " + activeNode + " active edge: " + activeEdge + " length: " + activeLength);
           }
                               
           if (activeLength == 0 && !activeNode.outEdges.containsKey(text.charAt(i))) {
             activeNode.outEdges.put(text.charAt(i), new Node(i, size)); //direction???
             System.out.println("inserted suffix " + activeNode.outEdges.get(text.charAt(i)));
-            
-            /*if (lastNewNode != null) {
-              lastNewNode.suffixLink = activeNode.outEdges.get(text.charAt(i));
-              System.out.println("suffix link from " +  lastNewNode + " to " + lastNewNode.suffixLink);
-              lastNewNode = null; 
-              
-            }*/
-                                   
+                                              
           } else {
                        
             if (activeLength == 0) {
               activeEdge = text.charAt(i);
-              next = activeNode.outEdges.get(activeEdge); // what about remainder still > 0 ?
+              next = activeNode.outEdges.get(activeEdge); 
               activeLength++;
               System.out.println("new active edge: " + activeEdge + " length: " + activeLength);
               break;              
             } 
-
             
-            if (text.charAt(next.start+activeLength) == text.charAt(i)) { //direction?               
+            if (text.charAt(next.start+activeLength) == text.charAt(i)) {              
                 activeLength++;
                 System.out.println("active Length = " + activeLength);
                 break;
@@ -159,6 +165,7 @@ public class UkkonenSuffixTree {
             }
           
           remainder--;
+          System.out.println("remainder: "+ remainder);
           
           if (activeNode.start == -1 && remainder > 0) {
             activeLength--;
@@ -187,35 +194,28 @@ public class UkkonenSuffixTree {
   public int[] search (String query) {
    throw new RuntimeException("not yet implemented"); 
   }
-  
- /* Other Methods */
- 
- /**
-  * Shows all suffixes stored in the tree in sorted (alphabetical) order.
-  * If the SuffixTree is built correctly this is easy to do recursively.
-  * @return a String representation of the SuffixTree.
-  */
- @Override
- public String toString () {
-  // Note: "\n" is treated as end-of-line when used within a String.
-  //return "SuffixTree for " + string + ":" + toString("\n ",root);
-  return "";
- }
- 
- public void display() {
-   /* base case: tree end node.end = size;
-    */
-  
-  
- }
+
+  public void display(Node n) {
+   //base case n.outEdges.isEmpty()
+   System.out.println(" [" + n.start + ", "+ n.end + "]");
+   
+   if (!n.outEdges.isEmpty()) {
+     System.out.println("out edges: " + n.outEdges);
+     for ( char c: n.outEdges.keySet()) {
+
+       display(n.outEdges.get(c));
+     }
+   }
+   else 
+     System.out.println("$");
+     return;
+ } 
   
  public static void main(String[] args) {
-   UkkonenSuffixTree st = new UkkonenSuffixTree("abcabxabcd");
+   UkkonenSuffixTree st = new UkkonenSuffixTree("aaa#bbb#ccc#abc#abc#abc#a#ba#cba#cb#c#c#bc#abc#ab#a");
    st.buildSuffixTree();
-  // st.display();
-   System.out.println(st.root.toString());
-   System.out.println(st.root.outEdges.keySet());
-   System.out.println(st.root.outEdges.get('b').toString());
+   st.display(st.root);
+
         
  } 
 
