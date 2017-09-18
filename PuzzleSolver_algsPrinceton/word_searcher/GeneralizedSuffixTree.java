@@ -27,8 +27,10 @@ public class GeneralizedSuffixTree extends UkkonenSuffixTree {
   }
   //tests below
   public static void main(String[] args) { 
-    GeneralizedSuffixTree GST = new GeneralizedSuffixTree("abc#abx#abcd#defgh#ddefg#gggggg#yyyyy#aaaa#asdasdaa#");
+    UkkonenSuffixTree GST = new GeneralizedSuffixTree("abc#abx#abcd#defgh#ddefg#gggggg#yyyyy#aaaa#asdasdaa#");
     GST.display(GST.root);
+    int[] found = GST.search("daa");
+    System.out.println("Found searched word between " + found[0] + " and " + found[1]);
   }
   
   /* ADD YOUR CODE HERE */

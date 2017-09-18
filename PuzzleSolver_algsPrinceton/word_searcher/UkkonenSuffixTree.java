@@ -17,13 +17,13 @@
  * 
  * Rule 1---
  * After an insertion from root, if active length > 0 
- * active_nodeï remains root
+ * active_nodeï¿½ remains root
  * active_edge is set to the first character of the new suffix we need to insert, (if abx i.e.ï¿½b)
- * active_lengthï is reduced by 1
+ * active_lengthï¿½ is reduced by 1
  * 
  * Rule 2:--
  * If we split an edge and insert a new node, and if that isï¿½not the first node created during the current step, 
- * we connect the previously inserted node and the new node through a special pointer, aï suffix link. We will 
+ * we connect the previously inserted node and the new node through a special pointer, aï¿½ suffix link. We will 
  * later see why that xxis useful. Here is what we get, the suffix link is represented as a dotted edge:
  * 
  * Rule 3:
@@ -120,7 +120,7 @@ public class UkkonenSuffixTree {
                 activeNode = next;
                 activeEdge = '\u0000';
                 activeLength = 0;                                
-                next = activeNode.outEdges.get(activeEdge);
+                
           }
                               
           if (activeLength == 0 && !activeNode.outEdges.containsKey(text.charAt(i))) {
@@ -158,7 +158,7 @@ public class UkkonenSuffixTree {
           
           remainder--;
           
-          if (activeNode.start == -1 && remainder > 0) {
+          if (activeNode.start == -1 && activeLength > 0) {
             activeLength--;
             activeEdge = text.charAt(i - activeLength);
             next = activeNode.outEdges.get(activeEdge); 
@@ -191,6 +191,9 @@ public class UkkonenSuffixTree {
         activeEdge = query.charAt(0);
         next = activeNode.outEdges.get(activeEdge);
         begin = next.start;
+        activeLength++;
+
+        
     }
     else return new int[]{-1,-1};
     
@@ -203,12 +206,15 @@ public class UkkonenSuffixTree {
            next = activeNode.outEdges.get(activeEdge);
        }
      
-       if (text.charAt(next.start+activeLength) == text.charAt(i)) {              
+       if (text.charAt(next.start+activeLength) == query.charAt(i)) {      
            activeLength++;
        }
+       else
+    	   	   return new int[]{-1,-1};
     }
     
     fin = next.start + activeLength;
+    begin = fin - query.length();
     
     return new int[] {begin, fin};
   }
@@ -231,10 +237,11 @@ public class UkkonenSuffixTree {
  } 
   //tests below
  public static void main(String[] args) {
-   UkkonenSuffixTree st = new UkkonenSuffixTree("aaa#bbb#ccc#abc#abc#abc#a#ba#cba#cb#c#cb#c#abc#ab#a");
+   UkkonenSuffixTree st = new UkkonenSuffixTree("abc#abx#abcd#defgh#ddefg#gggggg#yyyyy#aaaa#asdasdaa#");
    st.buildSuffixTree();
    st.display(st.root);
-
+   int[] found = st.search("yyyy");
+   System.out.println("found between " + found[0] + " and " + found[1]);
         
  } 
 
