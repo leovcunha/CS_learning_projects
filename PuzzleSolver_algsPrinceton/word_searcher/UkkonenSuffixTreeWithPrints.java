@@ -36,7 +36,7 @@ package word_searcher;
 import java.io.*;
 import java.util.*;
 
-public class UkkonenSuffixTree {
+public class UkkonenSuffixTreeWithPrints {
   
   Node root;  // Root of the SuffixTree
   Node lastNewNode; // for rule 2
@@ -87,7 +87,7 @@ public class UkkonenSuffixTree {
   /**
    * Constructor; create a SuffixTree for a given string
    */
-  public UkkonenSuffixTree (String text) {
+  public UkkonenSuffixTreeWithPrints (String text) {
     
     this.root = new Node(-1, -1);
     this.activeNode = root;
@@ -118,27 +118,31 @@ public class UkkonenSuffixTree {
     
     for (int i = 0; i < size; i++) {
 
+        System.out.println("iteration" + i+ ":::::::::::");
         remainder++;
+        System.out.println("remainder: " + remainder);
         lastNewNode = null;
 
         while (remainder > 0) {
-          
           edgeIndex = (i - remainder + 1);
-          
-          while (walkDown(next)) { //  opted for "while" in case need to do multiple jumps
+         
+          while (walkDown(next)) { //  opted for "while" because there can also be next.edgelength < activeLength 
                 activeNode = next;
                 activeLength -= next.edgeLength();  
                 edgeIndex += next.edgeLength();
                 activeEdge = text.charAt(edgeIndex);
-                next = activeNode.outEdges.get(activeEdge);             
+                next = activeNode.outEdges.get(activeEdge);
+                System.out.println("walked down to node: " + activeNode + " active edge: " + activeEdge + " length: " + activeLength);
+                
           }
-          
           //check only when positioned at the node if there is an edge of the current text char                     
           if (activeLength == 0 && !activeNode.outEdges.containsKey(text.charAt(i))) {
             activeNode.outEdges.put(text.charAt(i), new Node(i, size)); 
+            System.out.println("inserted suffix " + activeNode.outEdges.get(text.charAt(i)));
             
             if (lastNewNode != null) { //Rule 2 
                 lastNewNode.suffixLink = activeNode;
+                System.out.println("suffix link from " +  lastNewNode + " to " + lastNewNode.suffixLink);
                 lastNewNode = null;
               }
           //if there is already an edge move to it and check if the char at active length there is equal to text char                                                    
@@ -146,17 +150,19 @@ public class UkkonenSuffixTree {
                        
             if (activeLength == 0) {
               activeEdge = text.charAt(i);
-              next = activeNode.outEdges.get(activeEdge);           
+              next = activeNode.outEdges.get(activeEdge); 
+              System.out.println("new active edge: " + activeEdge + " length: " + activeLength);             
             } 
             // if char is already at edge , increment activeLengh and move to next phase(char)
-            if (text.charAt(next.start+activeLength) == text.charAt(i)) {
+            if (text.charAt(next.start+activeLength) == text.charAt(i)) {   
               
               //Rule 2...
               if (lastNewNode != null && activeNode != root) {
                 lastNewNode.suffixLink = activeNode;
-              }   
-              
+                System.out.println("suffix link from " +  lastNewNode + " to " + lastNewNode.suffixLink);
+              }
               activeLength++;
+              System.out.println("active Length = " + activeLength);
               break;
             }
             // when char is not at edge, split it to add the corresponding suffix, updating the existing ones
@@ -164,30 +170,41 @@ public class UkkonenSuffixTree {
             int splitEnd = next.start + activeLength;
             
             splitNode = new Node(next.start, splitEnd);
+            System.out.print("edge splited at new node:" + splitNode.start + " " );
+            System.out.println(splitNode.end);
             splitNode.outEdges.put(text.charAt(i), new Node(i, size));           
             next.start += activeLength;
             splitNode.outEdges.put(text.charAt(next.start), next); 
             activeNode.outEdges.put(activeEdge, splitNode);
+            System.out.println("new edge inserted :" + activeNode.outEdges.get(activeEdge).outEdges.get(text.charAt(i)));
+            System.out.println("old edge updated :" + activeNode.outEdges.get(activeEdge).outEdges.get(text.charAt(next.start)));
            
             if (lastNewNode != null) { //Rule 2 
               lastNewNode.suffixLink = splitNode;
+              System.out.println("suffix link from " +  lastNewNode + " to " + splitNode);
             }
               
               lastNewNode = splitNode; 
+              System.out.println("last new node: " + splitNode);
             }
-        
+          
           remainder--;
+          System.out.println("remainder: "+ remainder);
           
           //Rule 1
           if (activeNode.start == -1 && activeLength > 0) {
             activeLength--;
             activeEdge = text.charAt(i - remainder +1);
             next = activeNode.outEdges.get(activeEdge); 
+            System.out.println("new active edge: " + activeEdge + " length: " + activeLength);
+
           }
           else if (activeNode.start != -1) { //Rule 3
             activeNode = activeNode.suffixLink;
             next = activeNode.outEdges.get(activeEdge);
+            System.out.println("jumped to suffix link " + activeNode);
           }
+          System.out.println("active point: " + activeNode + " active edge: " + activeEdge + " length: " + activeLength + " remainder: " + remainder);
         }                   
     }
   }    
@@ -211,6 +228,7 @@ public class UkkonenSuffixTree {
     if (activeNode.outEdges.containsKey(query.charAt(0))) {
         activeEdge = query.charAt(0);
         next = activeNode.outEdges.get(activeEdge);
+        begin = next.start;
         activeLength++;        
     }
     else return new int[]{-1,-1};
@@ -220,11 +238,11 @@ public class UkkonenSuffixTree {
        if (walkDown(next)) {
            activeNode = next;
            activeEdge = query.charAt(i);
-           activeLength -= next.edgeLength();                                
+           activeLength = 0;                                
            next = activeNode.outEdges.get(activeEdge);
        }
      
-       if (next != null && text.charAt(next.start+activeLength) == query.charAt(i)) {      
+       if (text.charAt(next.start+activeLength) == query.charAt(i)) {      
            activeLength++;
        }
        else
@@ -309,19 +327,12 @@ public class UkkonenSuffixTree {
   
   //tests below
  public static void main(String[] args) throws IOException {
-   UkkonenSuffixTree st = new UkkonenSuffixTree("aaa#bbb#ccc#abc#abc#abc#a#ba#cba#cb#c#c#bc#abc#ab#a$");
+   UkkonenSuffixTreeWithPrints st = new UkkonenSuffixTreeWithPrints("aaa#bbb#ccc#abc#abc#abc#a#ba#cba#cb#c#c#bc#abc#ab#a$");
    st.buildSuffixTree();
-   int[] found = st.search("b#a");
-   System.out.println("found between " + found[0] + " and " + found[1]);
-   int[] found1 = st.search("$");
-   System.out.println("found between " + found1[0] + " and " + found1[1]);
-   int[] found2 = st.search("aa");
-   System.out.println("found between " + found2[0] + " and " + found2[1]);
-   int[] found3 = st.search("xxx");
-   System.out.println("not found: " + found3[0] + " and " + found3[1]);
    st.out = new PrintWriter(new FileWriter("test.dot"));  
    st.printTree();
    st.out.close();
+
  } 
 
 }

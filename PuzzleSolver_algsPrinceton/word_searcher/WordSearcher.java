@@ -67,7 +67,7 @@ public class WordSearcher {
         }
       }
     }
-    return sb1.toString() + sb2.toString()+ sb3.toString()+ sb4.toString();
+    return sb1.toString() + sb2.toString()+ sb3.toString()+ sb4.toString() + "$";
   }
 
     private WordSearcher () {
@@ -117,23 +117,26 @@ public class WordSearcher {
           System.out.println("");
         }
         String resultingText = allPossibles(puzzle);
-        System.out.println(resultingText);
         UkkonenSuffixTree GST = new GeneralizedSuffixTree(resultingText);
         
-        for (String s: searchedWords) {
-        	  int[] found = GST.search(s);
-        	  System.out.println(" Found between  [" +  found[0] + ", "+ found[1] + "]");
-        	  int[] xcoord = new int[] { found[0] / (puzzle.length+1), found[0] % (puzzle.length+1)};
-        	  int[] ycoord = new int[] { found[1] / (puzzle.length+1), found[1] % (puzzle.length+1)};
-          System.out.println(" Found between  [" +  xcoord[0] + ", "+ xcoord[1] + "] and  [" +  ycoord[0] + ", "+ ycoord[1] + "]");
-          
-      
-        }
-        
+        int NN = (puzzle.length+1)*(puzzle.length+1)-puzzle.length+1;
 
-       
-     
-        
-        
+        for (String s: searchedWords) {
+           int[] found = GST.search(s);
+           found = (found[0] != -1) ? found : GST.search(new StringBuffer(s).reverse().toString());
+           System.out.print("word " +s+ " Found" + " at ");
+           if (found[1] > 0 && found[1] < NN) {
+             System.out.println("horizontal");
+           }
+           else if (found[1] >= NN && found[1] < 2*NN) {
+             System.out.println("vertical");
+           }
+           else if (found[1] >= 2*NN) {
+             System.out.println("diagonal");
+           }
+           else 
+             System.out.println("nowhere");
+          
+        }
     }
 }
