@@ -33,13 +33,15 @@
  */
 package word_searcher;
 
+import java.io.*;
 import java.util.*;
 
 public class UkkonenSuffixTree {
   
   Node root;  // Root of the SuffixTree
   Node lastNewNode; // for rule 2
-
+  PrintWriter out;
+  
   //active point:
   Node activeNode;
   char activeEdge;
@@ -51,17 +53,21 @@ public class UkkonenSuffixTree {
   String text;
   int size;
   //
+  static int yield = 0;
    
   class Node { 
     TreeMap<Character, Node> outEdges;
     Node suffixLink; //pointer from last new node to newly created node  
     int start, end; // each array guards {x, y} of the puzzle
+    int id;
+    
     
     Node(int start, int end) {
        this.suffixLink = root;
        this.start = start;
        this.end = end;
        this.outEdges = new TreeMap<Character, Node>();
+       this.id = yield++;
     }
    
     int edgeLength() {
@@ -111,20 +117,33 @@ public class UkkonenSuffixTree {
     
     for (int i = 0; i < size; i++) {
 
+        System.out.println("iteration" + i+ ":::::::::::");
         remainder++;
+        System.out.println("remainder: " + remainder);
         lastNewNode = null;
 
         while (remainder > 0) {
          
-          if (walkDown(next)) {
+          while (walkDown(next)) {
                 activeNode = next;
-                activeEdge = '\u0000';
-                activeLength = 0;                                
+                activeLength -= next.edgeLength();  
+                activeEdge = text.charAt(i);
+                next = activeNode.outEdges.get(activeEdge);
+                System.out.println("walked down to node: " + activeNode + " active edge: " + activeEdge + " length: " + activeLength);
                 
           }
                               
           if (activeLength == 0 && !activeNode.outEdges.containsKey(text.charAt(i))) {
             activeNode.outEdges.put(text.charAt(i), new Node(i, size)); 
+            System.out.println("inserted suffix " + activeNode.outEdges.get(text.charAt(i)));
+            
+            if (lastNewNode != null) { //rule 2 
+                lastNewNode.suffixLink = activeNode;
+                System.out.println("suffix link from " +  lastNewNode + " to " + lastNewNode.suffixLink);
+                lastNewNode = null;
+              }
+                
+              
 
                                               
           } else {
@@ -132,42 +151,53 @@ public class UkkonenSuffixTree {
             if (activeLength == 0) {
               activeEdge = text.charAt(i);
               next = activeNode.outEdges.get(activeEdge); 
-              activeLength++;
-              break;              
+              System.out.println("new active edge: " + activeEdge + " length: " + activeLength);             
             } 
             
             if (text.charAt(next.start+activeLength) == text.charAt(i)) {              
                 activeLength++;
+                System.out.println("active Length = " + activeLength);
                 break;
             }
               
             int splitEnd = next.start + activeLength;
             
             splitNode = new Node(next.start, splitEnd);
+            System.out.print("edge splited at new node:" + splitNode.start + " " );
+            System.out.println(splitNode.end);
             splitNode.outEdges.put(text.charAt(i), new Node(i, size));           
             next.start += activeLength;
             splitNode.outEdges.put(text.charAt(next.start), next); 
             activeNode.outEdges.put(activeEdge, splitNode);
+            System.out.println("new edge splitted :" + activeNode.outEdges.get(activeEdge).outEdges.get(text.charAt(i)));
+            System.out.println("new edge splitted :" + activeNode.outEdges.get(activeEdge).outEdges.get(text.charAt(next.start)));
            
-            if (lastNewNode != null) {
+            if (lastNewNode != null) { //rule 2 
               lastNewNode.suffixLink = splitNode;
+              System.out.println("suffix link from " +  lastNewNode + " to " + splitNode);
             }
               
-              lastNewNode = splitNode;  
+              lastNewNode = splitNode; 
+              System.out.println("last new node: " + splitNode);
             }
           
           remainder--;
+          System.out.println("remainder: "+ remainder);
           
+          //rule 1
           if (activeNode.start == -1 && activeLength > 0) {
             activeLength--;
-            activeEdge = text.charAt(i - activeLength);
+            activeEdge = text.charAt(i - remainder + 1);
             next = activeNode.outEdges.get(activeEdge); 
+            System.out.println("new active edge: " + activeEdge + " length: " + activeLength);
 
           }
-          else if (activeNode.start != -1) {
+          else if (activeNode.start != -1) { //rule 3
             activeNode = activeNode.suffixLink;
             next = activeNode.outEdges.get(activeEdge);
-          }       
+            System.out.println("jumped to suffix link " + activeNode);
+          }
+          System.out.println("active point: " + activeNode + " active edge: " + activeEdge + " length: " + activeLength + " remainder: " + remainder);
         }                   
     }
   }    
@@ -210,7 +240,7 @@ public class UkkonenSuffixTree {
            activeLength++;
        }
        else
-    	   	   return new int[]{-1,-1};
+            return new int[]{-1,-1};
     }
     
     fin = next.start + activeLength;
@@ -225,24 +255,73 @@ public class UkkonenSuffixTree {
    System.out.println(" [" + n.start + ", "+ n.end + "]");
    
    if (!n.outEdges.isEmpty()) {
-     System.out.println("out edges: " + n.outEdges);
+     System.out.println("out edges of node:" + n +" " + n.outEdges);
      for ( char c: n.outEdges.keySet()) {
 
        display(n.outEdges.get(c));
      }
    }
    else 
-     System.out.println("$");
      return;
  } 
+  
+  void printTree() {
+      out.println("digraph {");
+      out.println("\trankdir = LR;");
+      out.println("\tedge [arrowsize=0.4,fontsize=10]");
+      out.println("\tnode0 [label=\"\",style=filled,fillcolor=lightgrey,shape=circle,width=.1,height=.1];");
+      out.println("//------leaves------");
+      printLeaves(root);
+      out.println("//------internal nodes------");
+      printInternalNodes(root);
+      out.println("//------edges------");
+      printEdges(root);
+      out.println("//------suffix links------");
+      printSLinks(root);
+      out.println("}");
+  }
+
+  void printLeaves(Node x) {
+      if (x.outEdges.isEmpty())
+          out.println("\tnode"+x.id+ " [label=\"\",shape=point]");
+      else {
+          for (Node child : x.outEdges.values())
+              printLeaves(child);
+      }
+  }
+
+  void printInternalNodes(Node x) {
+      if (x != root && !x.outEdges.isEmpty())
+          out.println("\tnode"+x.id+" [label=\"\",style=filled,fillcolor=lightgrey,shape=circle,width=.07,height=.07]");
+
+      for (Node child : x.outEdges.values())
+          printInternalNodes(child);
+  }
+
+  void printEdges(Node x) {
+      for (Node child : x.outEdges.values()) {
+          out.println("\tnode"+x.id+" -> node"+child.id+" [label=\""+child+"\",weight=3]");
+          printEdges(child);
+      }
+  }
+
+  void printSLinks(Node x) {
+      if (x.suffixLink != root && x.suffixLink != null)
+          out.println("\tnode"+x.id+" -> node"+x.suffixLink.id+" [label=\"\",weight=1,style=dotted]");
+      for (Node child : x.outEdges.values())
+          printSLinks(child);
+  }
+  
+
   //tests below
- public static void main(String[] args) {
-   UkkonenSuffixTree st = new UkkonenSuffixTree("abc#abx#abcd#defgh#ddefg#gggggg#yyyyy#aaaa#asdasdaa#");
+ public static void main(String[] args) throws IOException {
+   UkkonenSuffixTree st = new UkkonenSuffixTree("abc#abx#abcd#defgh#ddefg#gggggg#yyyyy#aaaa#asdasdaa$");
    st.buildSuffixTree();
-   st.display(st.root);
-   int[] found = st.search("yyyy");
+   int[] found = st.search("dasd");
    System.out.println("found between " + found[0] + " and " + found[1]);
-        
+   st.out = new PrintWriter(new FileWriter("test.dot"));  
+   st.printTree();
+   st.out.close();
  } 
 
 }
