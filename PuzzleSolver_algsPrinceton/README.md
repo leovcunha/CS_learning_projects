@@ -1,5 +1,7 @@
+
 ## **Word Searching** 
 from http://www.cs.princeton.edu/courses/archive/fall04/cos226/assignments/puzzle.html
+
 
 #### **I. Objective**
 
@@ -27,39 +29,41 @@ I thought of three possibilities out of many:
 
 **1.** Extract string of all possibilities and use a substring search algorithm like Knuth-Morris-Pratt.
 
-**Complexity analysis:**
-N => n² - number of chars in the matrix
-M => number of chars in the word dictionary 
-Preprocessing:  both text and pattern would need to bepreprocessed
-O(N+M)
-Search:
+**Complexity analysis:** 	
+
+N => n² - number of chars in the matrix		
+M => number of chars in the word dictionary	 
+Preprocessing:  both text and pattern would need to be preprocessed		
+O(N+M)	
+
+Search:		
 O(8*N) //considering all possible directions
 
 **2.** Create a hashTable linking every letter with its existing position in the char matrix and for each position create a graph of all neighbor characters. Search for first letter in the hashtable for possible starting positions. Second letter would give direction of search.
 
-**Complexity analysis:**
-N => n² - number of chars in the matrix
-M => number of chars in the word dictionary 
-Preprocessing: 
-O(N)
-Search:
-case half of the positions are the same first char
+**Complexity analysis:**	
+N => n² - number of chars in the matrix	 	
+M => number of chars in the word dictionary  	
+Preprocessing: 	
+O(N)	
+Search:		
+case half of the positions are the same first char	
 O(8*N/2 + M) = O(4N+M) 
 
-**3.** Create a generalized suffix tree of all horizontal, vertical and diagonal arrays using Ukkonen Algorithm. Search for dictionary words by traversing the tree. 
+**3.** Create a suffix tree of all horizontal, vertical and diagonal arrays using Ukkonen Algorithm. Search for dictionary words by traversing the tree. 
 
-**Complexity analysis:**
-N => n² - number of chars in the matrix
-M => number of chars in the word dictionary 
-Preprocessing: 
-O(4N) // got only 4directions
-Search:
+**Complexity analysis:**		
+N => n² - number of chars in the matrix		
+M => number of chars in the word dictionary 	
+Preprocessing: 	
+O(4N) // got only 4directions	
+Search:		
 O(2M) //reverse string to see if pattern is backwards in the puzzle
 
 ----------
 #### **III. Design**
 My option was for the Suffix Tree, although harder to implement from scratch , it gave ok performance of search for this problem. It also gave me an excellent opportunity to learn about this curious and complex data structure construction using Ukkonen Algorithm. 
-##### **Classes: **
+##### ** Classes: **
 
 * __UkkonenSuffixTree__
 parameters: String text 
@@ -67,7 +71,7 @@ methods: buildSuffixTree(), search(String pattern), printTree()
 
 * __GeneralizedSuffixTree extends UkkonenSuffixTree__
   methods: setSuffixEnds()
-  for a string containing many words separate each word in the same suffix tree. I used this to separate each diagonal, horizontal and vertical charArray.
+  for a string containing many words separate each word in a separate branch. I used this to separate each diagonal, horizontal and vertical charArray.
   
 * __WordSearcher__
   methods: setSuffixEnds()
@@ -77,6 +81,5 @@ Main class that handles input , output and call classes.
 #### **IV. References**
  * https://stackoverflow.com/questions/9452701/ukkonens-suffix-tree-algorithm-in-plain-english
  * http://www.geeksforgeeks.org/suffix-tree-application-2-searching-all-patterns/
- 
- ![V. Amazing suffix tree](https://drive.google.com/open?id=0B0lvivSNrIr2MVNKVmVzT3VWd2s)
- 
+
+![V. Amazing suffix tree](https://github.com/leovcunha/CS_learning_projects/blob/master/PuzzleSolver_algsPrinceton/suffixtree.png)
