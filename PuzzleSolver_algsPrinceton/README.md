@@ -46,7 +46,7 @@ Search:
 case half of the positions are the same first char
 O(8*N/2 + M) = O(4N+M) 
 
-**3.** Create a suffix tree of all horizontal, vertical and diagonal arrays using Ukkonen Algorithm. Search for dictionary words by traversing the tree. 
+**3.** Create a generalized suffix tree of all horizontal, vertical and diagonal arrays using Ukkonen Algorithm. Search for dictionary words by traversing the tree. 
 
 **Complexity analysis:**
 N => n² - number of chars in the matrix
@@ -67,7 +67,7 @@ methods: buildSuffixTree(), search(String pattern), printTree()
 
 * __GeneralizedSuffixTree extends UkkonenSuffixTree__
   methods: setSuffixEnds()
-  for a string containing many words separate each word in a separate branch. I used this to separate each diagonal, horizontal and vertical charArray.
+  for a string containing many words separate each word in the same suffix tree. I used this to separate each diagonal, horizontal and vertical charArray.
   
 * __WordSearcher__
   methods: setSuffixEnds()
@@ -77,3 +77,6 @@ Main class that handles input , output and call classes.
 #### **IV. References**
  * https://stackoverflow.com/questions/9452701/ukkonens-suffix-tree-algorithm-in-plain-english
  * http://www.geeksforgeeks.org/suffix-tree-application-2-searching-all-patterns/
+ 
+ ![V. Amazing suffix tree](https://drive.google.com/open?id=0B0lvivSNrIr2MVNKVmVzT3VWd2s)
+ 
