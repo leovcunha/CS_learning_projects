@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<drjava version="drjava-20160913-225446">
+  <project autorefresh="false" main="src.twitter.Main" root="" work="">
+    <createjar file=""/>
+    <source>
+      <file active="true" name="src/twitter/Main.java" package="twitter" timestamp="01-Feb-2018 17:20:38">
+        <select from="438" to="438"/>
+        <scroll column="28" row="0"/>
+      </file>
+      <file name="src/twitter/Timespan.java" package="twitter" timestamp="13-Jan-2017 11:19:44">
+        <select from="438" to="438"/>
+        <scroll column="28" row="0"/>
+      </file>
+      <file name="src/twitter/Tweet.java" package="twitter" timestamp="13-Jan-2017 11:19:44">
+        <select from="438" to="438"/>
+        <scroll column="28" row="0"/>
+      </file>
+      <file name="src/twitter/TweetReader.java" package="twitter" timestamp="13-Jan-2017 11:19:44">
+        <select from="438" to="438"/>
+        <scroll column="28" row="0"/>
+      </file>
+      <file name="test/twitter/FilterTest.java" package="twitter" timestamp="23-Mar-2017 16:03:26">
+        <select from="438" to="438"/>
+        <scroll column="28" row="0"/>
+      </file>
+      <file name="test/twitter/ExtractTest.java" package="twitter" timestamp="15-May-2017 15:17:38">
+        <select from="438" to="438"/>
+        <scroll column="28" row="0"/>
+      </file>
+      <file name="src/twitter/SocialNetwork.java" package="twitter" timestamp="01-Feb-2018 17:10:00">
+        <select from="438" to="438"/>
+        <scroll column="28" row="0"/>
+      </file>
+      <file name="src/twitter/Filter.java" package="twitter" timestamp="01-Feb-2018 17:14:42">
+        <select from="438" to="438"/>
+        <scroll column="28" row="0"/>
+      </file>
+      <file name="test/twitter/SocialNetworkTest.java" package="twitter" timestamp="01-Feb-2018 17:17:22">
+        <select from="438" to="438"/>
+        <scroll column="28" row="0"/>
+      </file>
+      <file name="src/twitter/Extract.java" package="twitter" timestamp="01-Feb-2018 17:17:48">
+        <select from="438" to="438"/>
+        <scroll column="28" row="0"/>
+      </file>
+    </source>
+    <included/>
+    <excluded/>
+    <collapsed/>
+    <classpath>
+      <file absolute="false" name="lib/javax.json-1.0.jar"/>
+    </classpath>
+    <breakpoints/>
+    <watches/>
+    <bookmarks/>
+    <preferences/>
+  </project>
+</drjava>
