@@ -1,5 +1,5 @@
 
-#Tweet Tweet
+# Tweet Tweet
 
 *Solved according to the following spec from http://web.mit.edu/6.005/www/sp16/psets/ps1/*
 
@@ -14,7 +14,7 @@ Implement the method according to the spec.
 Revise your implementation and improve your test cases until your implementation passes all your tests.
 
 
-##Problem 1: Extracting data from tweets
+## Problem 1: Extracting data from tweets
 
 In this problem, you will test and implement the methods in Extract.java.
 
@@ -38,7 +38,7 @@ Read the spec for the Timespan class carefully, because it may answer many of th
 
 Commit to Git. Once you’re happy with your solution to this problem, commit and push! Committing frequently – whenever you’ve fixed a bug or added a working and tested feature – is a good way to use version control, and will be a good habit to have for your team projects.
 
-##Problem 2: Filtering lists of tweets
+## Problem 2: Filtering lists of tweets
 
 In this problem, you will test and implement the methods in Filter.java.
 
@@ -54,7 +54,7 @@ For all problems on this problem set, you are free to rewrite or replace the pro
 
 Commit to Git. Once you’re happy with your solution to this problem, commit and push!
 
-##Problem 3: Inferring a social network
+## Problem 3: Inferring a social network
 
 In this problem, you will test and implement the methods in SocialNetwork.java. The guessFollowsGraph() method creates a social network over the people who are mentioned in a list of tweets. The social network is an approximation to who is following whom on Twitter, based only on the evidence found in the tweets. The influencers() method returns a list of people sorted by their influence (total number of followers).
 
@@ -64,7 +64,7 @@ Implement guessFollowsGraph() and influencers(), and make sure your tests pass. 
 
 If you want to see your code work on a live sample of tweets, run Main.java. It will print the top 10 most-followed people according to the social network you generated. You can search for them on Twitter to see if their actual number of followers has a similar order.
 
-##Problem 4: Get smarter
+## Problem 4: Get smarter
 
 In this problem, you will implement one additional kind of evidence in guessFollowsGraph(). Note that we are taking a broad view of “influence” here, and even Twitter-following is not a ground truth for influence, only an approximation. It’s possible to read Twitter without explicitly following anybody. It’s also possible to be influenced by somebody through other media (email, chat, real life) while producing evidence of the influence on twitter.
 
