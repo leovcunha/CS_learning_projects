@@ -72,7 +72,7 @@ public class Extract {
         }
         mentionedUsers.addAll(mentionedUsersLowerCase);
       }
-      System.out.println(mentionedUsers);
+      //System.out.println(mentionedUsers);
       return mentionedUsers;
         
         
