@@ -39,9 +39,9 @@ class Client(object):
 
             for sock in ready_to_read:
                 if sock == self.socket:
-                    data = sock.recv(4096)
+                    data = sock.recv(utils.MESSAGE_LENGTH)
                     if not data:
-                        print "/n "+ utils.CLIENT_SERVER_DISCONNECTED.format(self.address, self.port)
+                        print "\n"+ utils.CLIENT_SERVER_DISCONNECTED.format(self.address, self.port)
                         sys.exit()
                     else:
                         data = data.rstrip(' ')

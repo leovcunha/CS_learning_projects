@@ -28,7 +28,7 @@ class Server(object):
         message = ""
         while 1:
             
-            ready_to_read, ready_to_write, in_error = select.select(self.socket_list, [], [])
+            ready_to_read,ready_to_write,in_error = select.select(self.socket_list, [], [])
 
             for sock in ready_to_read:
                 if sock == self.socket:
@@ -40,89 +40,90 @@ class Server(object):
                 else:
                     channelrn = None
                     for channel in self.channels:
-                        if sock in channels[channel]:
+                        if sock in self.channels[channel]:
                             channelrn = channel
                   
                     try:
                         data = sock.recv(4096)
                         if data:
-                            message += data
-                            if len(message) < utils.MESSAGE_LENGTH:
+                            temp = message + data
+                            if len(temp) < utils.MESSAGE_LENGTH:
+                                message = temp
                                 continue
 
-                            if len(message) >= utils.MESSAGE_LENGTH:
-                                message = (message)[utils.MESSAGE_LENGTH:]
-                                data = (message)[:utils.MESSAGE_LENGTH]
+                            if len(message) < utils.MESSAGE_LENGTH and len(temp) >= utils.MESSAGE_LENGTH:
+                                message = (temp)[utils.MESSAGE_LENGTH:]
+                                data = (temp)[:utils.MESSAGE_LENGTH]
                             data = data.rstrip()
                             # print "received data after stripping: " + str(len(data)) + data
                             args = data.split()
                             if args == []:
                                 continue
                             if first_message:
-                                self.sockname[sock] = args[0]
+                                self.sock_name[sock] = args[0]
                                 first_message = False
                                 continue
                             if args[0] == '/list':
-                                for channel in channels:
+                                for channel in self.channels:
                                     sock.sendall(pad_message(channel + "\n"))
                                 continue
                             if args[0] == '/create':
                                 if len(args) == 1:
                                     sock.sendall(pad_message(utils.SERVER_CREATE_REQUIRES_ARGUMENT + "\n"))
                                     continue
-                                if args[1] in channels:
+                                if args[1] in self.channels:
                                     sock.sendall(pad_message(utils.SERVER_CHANNEL_EXISTS.format(args[1]) + "\n"))
                                     continue
-                                channels[args[1]] = []
-                                for channel in channels:
-                                    if sock in channels[channel]:
-                                        channels[channel].remove(sock)
-                                channels[args[1]].append(sock)
+                                self.channels[args[1]] = []
+                                for channel in self.channels:
+                                    if sock in self.channels[channel]:
+                                        self.channels[channel].remove(sock)
+                                self.channels[args[1]].append(sock)
                                 continue
                             if args[0] == '/join':
                                 if len(args) == 1:
                                     sock.sendall(pad_message(utils.SERVER_JOIN_REQUIRES_ARGUMENT + "\n"))
                                     continue
-                                if args[1] not in channels:
+                                if args[1] not in self.channels:
                                     sock.sendall(pad_message(utils.SERVER_NO_CHANNEL_EXISTS.format(args[1]) + "\n"))
                                     continue
-                                for channel in channels:
-                                    if sock in channels[channel]:
-                                        channels[channel].remove(sock)
-                                channels[args[1]].append(sock)
-                                broadcast(server_socket, sock, args[1], utils.SERVER_CLIENT_JOINED_CHANNEL.format(self.sock_name[sock]) + "\n")
+                                for channel in self.channels:
+                                    if sock in self.channels[channel]:
+                                        self.channels[channel].remove(sock)
+                                self.channels[args[1]].append(sock)
+                                self.broadcast(sock, args[1], utils.SERVER_CLIENT_JOINED_CHANNEL.format(self.sock_name[sock]) + "\n")
                                 continue
                             if args[0][0] == '/':
                                 sock.sendall(pad_message(utils.SERVER_INVALID_CONTROL_MESSAGE.format(args[0]) + "\n"))
                                 continue
                             joinedChannel = False
-                            for channel in channels:
-                                if sock in channels[channel]:
+                            for channel in self.channels:
+                                if sock in self.channels[channel]:
                                     joinedChannel = True
                             if not joinedChannel:
                                 sock.sendall(pad_message(utils.SERVER_CLIENT_NOT_IN_CHANNEL + "\n"))
                                 continue
 
                         # there is something in the socket
-                            self.broadcast(self.socket, sock, channelrn, "\r" + '[' + self.sock_name[sock] + '] ' + data + "\n")  
+                            self.broadcast(sock, channelrn, "\r" + '[' + self.sock_name[sock] + '] ' + data + "\n")  
                         else:
                             # remove the socket that's broken    
                             if sock in self.socket_list:
                                 self.socket_list.remove(sock)
                             # at this stage, no data means probably the connection has been broken
-                            self.broadcast(self.socket, sock, channelrn, utils.SERVER_CLIENT_LEFT_CHANNEL.format(self.sock_name[sock]) + "\n") 
+                            self.broadcast(sock, channelrn, utils.SERVER_CLIENT_LEFT_CHANNEL.format(self.sock_name[sock]) + "\n") 
 
                     except: 
-                        self.broadcast(self.socket, sock, channelrn, utils.SERVER_CLIENT_LEFT_CHANNEL.format(self.sock_name[sock]))
+                        self.broadcast(sock, channelrn, utils.SERVER_CLIENT_LEFT_CHANNEL.format(self.sock_name[sock]) + "\n")
                         continue
 
         
-    def broadcast (server_socket, sock, channel, msg):
+    def broadcast (self, sock, channel, msg):
         if channel is None:
             return
         for socket in self.channels[channel]:
         # send the message only to peer
-            if socket != server_socket and socket != sock :
+            if socket != sock :
                 try :
                     socket.sendall(pad_message(msg))
                 except :
