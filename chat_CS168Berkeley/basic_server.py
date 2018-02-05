@@ -2,7 +2,7 @@
 """
 Created on Wed Feb 08 09:57:50 2017
 
-@author: c055867
+@author: leovcunha
 """
 
 import socket
