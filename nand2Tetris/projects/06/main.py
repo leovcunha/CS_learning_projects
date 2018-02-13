@@ -2,7 +2,7 @@
 """
 Created on Fri Feb  9 15:04:28 2018
 
-@author: c055867
+@author: leovcunha
 """
 
 if __name__ == "__main__":
@@ -21,13 +21,10 @@ if __name__ == "__main__":
     in_file = str(in_to_out_file.match(sys.argv[1]).group())
     out = open(in_file+'.hack', 'w')
 
-    f = open(sys.argv[1])
-    ST = symboltable.generate_ST(f)
+    with open(sys.argv[1]) as f:
+        ST = symboltable.generate_ST(f)
 
-    for line in f:
-        print("parsing line " + str(line))
-        out.write(code.code(parser.parser(line), ST) + "/n")
+    with open(sys.argv[1]) as f:
+        code.code(f, ST, out)
+
     out.close()
-
-
-

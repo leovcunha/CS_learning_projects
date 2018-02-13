@@ -2,7 +2,7 @@
 """
 Created on Fri Feb  9 15:04:10 2018
 
-@author: c055867
+@author: leovcunha
 """
 import re
 import parser
@@ -12,11 +12,11 @@ empty_line = re.compile( r'\s*')
 a_label = re.compile( r'\s*\(\w+\)\s*')
 c_inst = re.compile( r'([DAM]+\s*\=.*)|(\s*\-?\!?[AMD10]\s*[+-|&]?\s*[AMD10]?\;J\w\w)')
 a_inst = re.compile( r'@.*')
+a_num = re.compile( r'@\d+')
 
 def generate_ST(f):
     symbol_counter = 16
     label_rom_address = 0
-    symbols = {}
 
     for iline in f:
         line = parser.parser(iline)
@@ -26,6 +26,7 @@ def generate_ST(f):
             label = a_label.search(line).group()
             label = label.replace('(', '')
             label = label.replace(')', '')
+            print("storing " + label + " at " + str(label_rom_address))
             symbols[label] = str(label_rom_address)
         if a_inst.search(line) or c_inst.search(line):
         	# A instruction - not label
