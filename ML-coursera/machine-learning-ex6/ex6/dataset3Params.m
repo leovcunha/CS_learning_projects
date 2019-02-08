@@ -22,10 +22,24 @@ sigma = 0.3;
 %  Note: You can compute the prediction error using 
 %        mean(double(predictions ~= yval))
 %
+C_vec = [0.01 0.03 0.1 0.3 1, 3, 10 30]
+sigma_vec = [0.01 0.03 0.1 0.3 1, 3, 10 30]
+error_min = 1e9;
 
+for i = 1:length(C_vec)
+  for j = 1:length(sigma_vec)
 
+     svm = svmTrain(X, y, C_vec(i), @(x1, x2) gaussianKernel(x1, x2, sigma_vec(j)));
+     predictions = svmPredict(svm, Xval);
+     error_val(i,j) = mean(double(predictions ~= yval));  
+     if error_val(i,j) < error_min
+       C = C_vec(i);
+       sigma = sigma_vec(j);
+       error_min = error_val(i,j);
+     endif
 
-
+  end 
+end
 
 
 
