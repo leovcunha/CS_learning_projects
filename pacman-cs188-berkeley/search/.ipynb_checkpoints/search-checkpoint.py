@@ -87,18 +87,75 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    S = util.Stack()
+    S.push((problem.getStartState(), [])) #node and path to get until there
+    discovered = set() 
+    
+    while not S.isEmpty():
+        v, path = S.pop()
+        print(path)
+        if problem.isGoalState(v):
+            return path
+        discovered.add(v)
+        edges = problem.getSuccessors(v)    
+        for w in edges: 
+            if w[0] not in discovered:
+                S.push((w[0], path+[w[1]]))
+
+    
+    #util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
+    S = util.Queue()
+    S.push((problem.getStartState(), []))  #node and path to get until there
+    discovered = set()
+    
+    while not S.isEmpty():
+        v, path = S.pop()
+        print(path)
+        if problem.isGoalState(v):
+            return path
+        discovered.add(v)
+        edges = problem.getSuccessors(v)    
+        for w in edges: 
+            if w[0] not in discovered:
+                S.push((w[0], path+[w[1]]))
+        
+    #util.raiseNotDefined()            
+                    
+    
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #util.raiseNotDefined()
+    PQ = util.PriorityQueue()
+    discovered = set()
+    PQ.push((problem.getStartState(), []), 0)
+    costFunc = {}
+    costFunc[problem.getStartState()] = 0
+    
+    while not PQ.isEmpty():
+        v, path = PQ.pop()
+        print(v)
+        print(path)
+        if problem.isGoalState(v):
+            return path
+        discovered.add(v)
+        edges = problem.getSuccessors(v)    
+        for w in edges: 
+            if w[0] not in discovered:
+                if w[0] not in costFunc:
+                    costFunc[w[0]] = costFunc[v]+w[2]
+                    PQ.push((w[0], path+[w[1]]), costFunc[w[0]])
+                    print(costFunc)
+                else:
+                    if costFunc[w[0]] > costFunc[v]+w[2]:
+                        costFunc[w[0]] = costFunc[v]+w[2] 
+                    PQ.update((w[0], path+[w[1]]),costFunc[w[0]])        
 
+            
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
