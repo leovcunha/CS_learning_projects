@@ -202,13 +202,9 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
         #util.raiseNotDefined()
-        feas = self.featExtractor.getFeatures(state, action)
-
-        difference = (reward + self.discount * self.getValue(nextState)) - self.getQValue(state, action)
-
-
-        for fea, value in feas.items():
-            self.weights[fea] += self.alpha * difference * value
+        feats = self.featExtractor.getFeatures(state, action)
+        for f in feats: 
+            self.weights[f] = self.weights[f] + self.alpha * feats[f]*((reward + self.discount * self.computeValueFromQValues(nextState)) -                     self.getQValue(state, action))
         
     def final(self, state):
         "Called at the end of each game."

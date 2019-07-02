@@ -93,7 +93,7 @@ def depthFirstSearch(problem):
     
     while not S.isEmpty():
         v, path = S.pop()
-#        print(path)
+        print(path)
         if problem.isGoalState(v):
             return path
         discovered.add(v)
@@ -114,7 +114,7 @@ def breadthFirstSearch(problem):
     
     while not S.isEmpty():
         v, path = S.pop()
-#        print(path)
+        print(path)
         if problem.isGoalState(v):
             return path
         discovered.add(v)
@@ -138,8 +138,8 @@ def uniformCostSearch(problem):
     
     while not PQ.isEmpty():
         v, path = PQ.pop()
-#        print(v)
-#        print(path)
+        print(v)
+        print(path)
         if problem.isGoalState(v):
             return path
         discovered.add(v)
